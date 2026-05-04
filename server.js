@@ -1,41 +1,40 @@
-require('dotenv').config({ path: __dirname + '/.env' });
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
 const Groq = require('groq-sdk');
+const path = require('path');
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Initialize Groq client
 const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY
 });
 
-// Debug once at startup
-console.log("Loaded GROQ_API_KEY:", process.env.GROQ_API_KEY ? "YES" : "NO");
+console.log("GROQ_API_KEY Loaded:", process.env.GROQ_API_KEY ? "YES" : "NO");
 
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message, history, temperature, topP, genre, tone } = req.body;
+        const { message, history = [], temperature, topP, genre, tone } = req.body;
 
         if (!process.env.GROQ_API_KEY) {
             return res.status(500).json({
-                error: "Missing Groq API Key. Ensure .env is correctly loaded."
+                error: "Missing GROQ_API_KEY in environment variables"
             });
         }
 
-        // Map history to Groq format (OpenAI compatibility)
         const messages = [
             {
                 role: "system",
-                content: `You are CineScript-AI, an expert Hollywood screenwriter bot. Your domain is strictly creating movie dialogues, characters, and scenes. The current Scene Genre is: ${genre}. The Tone is: ${tone}. Only respond with script formats, dialogue ideas, screenwriting advice, or cinematic descriptions. Do not answer general queries outside of movie/TV writing.`
+                content: `You are CineScript-AI, an expert Hollywood screenwriter bot. Genre: ${genre}, Tone: ${tone}. Only generate cinematic dialogues.`
             },
             ...history.map(msg => ({
                 role: (msg.role === 'model' || msg.role === 'assistant') ? 'assistant' : 'user',
-                content: msg.content || (msg.parts && msg.parts[0]?.text) || ""
+                content: msg.content || msg?.parts?.[0]?.text || ""
             })),
             {
                 role: "user",
@@ -44,7 +43,7 @@ app.post('/api/chat', async (req, res) => {
         ];
 
         const chatCompletion = await groq.chat.completions.create({
-            messages: messages,
+            messages,
             model: "llama-3.1-8b-instant",
             temperature: parseFloat(temperature) || 0.7,
             top_p: parseFloat(topP) || 0.9,
@@ -56,15 +55,15 @@ app.post('/api/chat', async (req, res) => {
         res.json({ reply });
 
     } catch (error) {
-        console.error("Error generating dialogue with Groq:", error);
+        console.error("Groq Error:", error);
         res.status(500).json({
             error: error.message || "Internal server error"
         });
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
-    console.log(`CineScript AI Server (Groq) running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
