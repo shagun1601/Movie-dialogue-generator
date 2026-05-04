@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineScript AI | Movie Dialogue Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Interface -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>CineScript <span>AI</span></h1>
+                <p>Domain-Specific Model</p>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label for="genre">Scene Genre</label>
+                    <select id="genre">
+                        <option value="Sci-Fi / Cyberpunk">Sci-Fi / Cyberpunk</option>
+                        <option value="Action / Thriller">Action / Thriller</option>
+                        <option value="Romantic Comedy">Romantic Comedy</option>
+                        <option value="Horror / Suspense">Horror / Suspense</option>
+                        <option value="Drama / Historical">Drama / Historical</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="tone">Dialogue Tone</label>
+                    <select id="tone">
+                        <option value="Gritty & Realistic">Gritty & Realistic</option>
+                        <option value="Witty & Sarcastic">Witty & Sarcastic</option>
+                        <option value="Poetic & Dramatic">Poetic & Dramatic</option>
+                        <option value="Tense & Urgent">Tense & Urgent</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <div class="slider-header">
+                        <label for="temperature">Temperature <span class="help-icon" title="Controls randomness and creativity.">?</span></label>
+                        <span id="temp-val">0.7</span>
+                    </div>
+                    <input type="range" id="temperature" min="0" max="1.5" step="0.1" value="0.7">
+                </div>
+
+                <div class="control-group">
+                    <div class="slider-header">
+                        <label for="topP">Top-P (Nucleus) <span class="help-icon" title="Controls response probability mass.">?</span></label>
+                        <span id="topP-val">0.9</span>
+                    </div>
+                    <input type="range" id="topP" min="0" max="1" step="0.05" value="0.9">
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button id="clear-chat">Clear History</button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-wrapper">
+            <div class="chat-header">
+                <h2>Screenwriter's Room</h2>
+                <div class="status-indicator">
+                    <span class="dot"></span> Groq   API Active
+                </div>
+            </div>
+            
+            <div class="chat-container" id="chat-container">
+                <div class="message ai-message startup">
+                    <div class="avatar">AI</div>
+                    <div class="bubble">
+                        Welcome to the screenwriter's room. I am CineScript AI, tuned specifically for cinema script generation. Give me a scene setup, characters, or dialogue prompt to begin.
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <textarea id="user-input" placeholder="E.g., Two detectives argue over a cold case in a rainy diner..."></textarea>
+                <button id="send-btn">Generate</button>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
